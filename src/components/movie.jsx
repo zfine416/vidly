@@ -1,14 +1,24 @@
 import React, { Component } from "react";
-import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getMovies } from "../services/fakeMovieService";
+import Like from "./like";
+import Pagination from "./pagination";
 
 class Movie extends Component {
   state = {
     movies: getMovies(),
-    movieCount: 9
+    pageSize: 4
   };
-  handleDelete = movie => {
-    deleteMovie(movie);
-    this.setState({ movieCount: this.state.movieCount - 1 });
+  handleLike = movie => {
+    //an array of objects
+    const movies = [...this.state.movies];
+    //get the index & clone that object
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].liked = !movies[index].liked;
+    this.setState({ movies });
+  };
+  handlePageChange = page => {
+    console.log(page);
   };
   render() {
     const { length: count } = this.state.movies;
@@ -24,6 +34,7 @@ class Movie extends Component {
               <th scope="col">Stock</th>
               <th scope="col">Rate</th>
               <th scope="col" />
+              <th scope="col" />
             </tr>
           </thead>
           <tbody>
@@ -33,6 +44,12 @@ class Movie extends Component {
                 <td>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
                 <td>{movie.dailyRentalRate}</td>
+                <td>
+                  <Like
+                    addLike={() => this.handleLike(movie)}
+                    liked={movie.liked}
+                  />
+                </td>
                 <td>
                   <button
                     onClick={() => this.handleDelete(movie._id)}
@@ -46,6 +63,11 @@ class Movie extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination
+          itemsCount={count}
+          pageSize={this.state.pageSize}
+          onPageChange={this.handlePageChange}
+        />
       </React.Fragment>
     );
   }

@@ -8,6 +8,10 @@ class Movie extends Component {
     movies: getMovies(),
     pageSize: 4
   };
+  handleDelete = id => {
+    const movies = this.state.movies.filter(c => c._id !== id);
+    this.setState({ movies });
+  };
   handleLike = movie => {
     //an array of objects
     const movies = [...this.state.movies];
